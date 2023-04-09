@@ -14,6 +14,8 @@ struct Vertex {
 struct Stage {
     pipeline: Pipeline,
     bindings: Bindings,
+    x: f32,
+    y: f32,
 }
 
 impl Stage {
@@ -30,12 +32,21 @@ impl Stage {
         let indices: [u16; 6] = [0, 1, 2, 0, 2, 3];
         let index_buffer = Buffer::immutable(ctx, BufferType::IndexBuffer, &indices);
 
-        let pixels: [u8; 4 * 4 * 4] = [
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
-            0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        let pixels: [u8; 4 * 4 * 4] = [ 
+            // 4 rows, 4 pixels each
+            0x00, 0xFF, 0xFF, 0xFF, // bottom left corner
+            0xFF, 0x00, 0x00, 0xFF,  
+            0xFF, 0xFF, 0xFF, 0xFF,   0xFF, 0xFF, 0x00, 0xFF, // bottom right corner
+
+            0xFF, 0x00, 0x00, 0xFF,   0xFF, 0xFF, 0xFF, 0xFF, 
+            0xFF, 0x00, 0x00, 0xFF,   0xFF, 0xFF, 0xFF, 0xFF, 
+            
+            0xFF, 0xFF, 0xFF, 0xFF,   0xFF, 0x00, 0x00, 0x00, 
+            0xFF, 0xFF, 0xFF, 0xFF,   0xFF, 0x00, 0x00, 0xFF, 
+            
+            0x00, 0xFF, 0x00, 0xFF, // top left corner
+            0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0x00, 0x00, 0xFF,   0x00, 0x00, 0x00, 0xFF, // top right corner
         ];
         let texture = Texture::from_rgba8(ctx, 4, 4, &pixels);
 
@@ -56,32 +67,49 @@ impl Stage {
             ],
             shader,
         );
-
-        Stage { pipeline, bindings }
+        let x = -0.32;
+        let y = 0.5;
+        Stage { pipeline, bindings, x, y }
     }
 }
 
+
 impl EventHandler for Stage {
+
     fn update(&mut self, _ctx: &mut Context) {}
 
     fn draw(&mut self, ctx: &mut Context) {
-        let t = date::now();
 
         ctx.begin_default_pass(Default::default());
 
         ctx.apply_pipeline(&self.pipeline);
         ctx.apply_bindings(&self.bindings);
-        for i in 0..10 {
-            let t = t + i as f64 * 0.3;
 
-            ctx.apply_uniforms(&shader::Uniforms {
-                offset: (t.sin() as f32 * 0.5, (t * 3.).cos() as f32 * 0.5),
-            });
-            ctx.draw(0, 6, 1);
-        }
+        ctx.draw(0, 6, 1);
+
+        ctx.apply_uniforms(&shader::Uniforms {
+            offset: (*&self.x, *&self.y),
+        });
         ctx.end_render_pass();
 
         ctx.commit_frame();
+    }
+
+    fn key_down_event(
+        &mut self,
+        _ctx: &mut Context,
+        _keycode: KeyCode,
+        _keymods: KeyMods,
+        _repeat: bool
+    ) { 
+        match _keycode{
+            miniquad::KeyCode::Left=>self.x -= 0.1,
+            miniquad::KeyCode::Right=>self.x += 0.1,
+            miniquad::KeyCode::Up=>self.y += 0.1,
+            miniquad::KeyCode::Down=>self.y -= 0.1,
+            _=>println!("unhandled key"),
+            }
+          
     }
 }
 
