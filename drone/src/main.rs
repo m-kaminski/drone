@@ -105,6 +105,10 @@ impl EventHandler for Stage {
             miniquad::KeyCode::Right=>self.x += 0.1,
             miniquad::KeyCode::Up=>self.y += 0.1,
             miniquad::KeyCode::Down=>self.y -= 0.1,
+            miniquad::KeyCode::A=>self.x -= 0.1,
+            miniquad::KeyCode::D=>self.x += 0.1,
+            miniquad::KeyCode::W=>self.y += 0.1,
+            miniquad::KeyCode::S=>self.y -= 0.1,
             _=>println!("unhandled key"),
             }
           
