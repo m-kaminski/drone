@@ -13,13 +13,32 @@ struct Vertex {
 
 struct Stage {
     pipeline: Pipeline,
+    drone: Drone
+}
+
+
+/// TRAIT RENDER
+
+trait  Render {
+     fn render(&self);
+}
+
+struct Drone {
     bindings: Bindings,
     x: f32,
     y: f32,
 }
 
-impl Stage {
-    pub fn new(ctx: &mut Context) -> Stage {
+impl Render for Drone {
+     fn render(&self) {
+        
+        
+    }
+}
+
+impl Drone {
+    pub fn new(ctx: &mut Context) -> Drone {
+       
         #[rustfmt::skip]
         let vertices: [Vertex; 4] = [
             Vertex { pos : Vec2 { x: -0.5, y: -0.5 }, uv: Vec2 { x: 0., y: 0. } },
@@ -54,8 +73,19 @@ impl Stage {
             vertex_buffers: vec![vertex_buffer],
             index_buffer: index_buffer,
             images: vec![texture],
-        };
+        }; 
+        Drone { bindings, x:-0.3, y:0.4 }
 
+    }
+}
+
+
+
+impl Stage {
+    pub fn new(ctx: &mut Context) -> Stage {
+        #[rustfmt::skip]
+
+        let drone = Drone::new(ctx);
         let shader = Shader::new(ctx, shader::VERTEX, shader::FRAGMENT, shader::meta()).unwrap();
 
         let pipeline = Pipeline::new(
@@ -67,7 +97,7 @@ impl Stage {
             ],
             shader,
         );
-        Stage { pipeline, bindings, x:-0.3, y:0.4 }
+        Stage { pipeline,drone }
     }
 }
 
@@ -81,13 +111,18 @@ impl EventHandler for Stage {
         ctx.begin_default_pass(Default::default());
 
         ctx.apply_pipeline(&self.pipeline);
-        ctx.apply_bindings(&self.bindings);
 
+
+        ctx.apply_bindings(&self.drone.bindings);
+        // begining and length of index buffer (essentially number of vertices) and number of instances
         ctx.draw(0, 6, 1);
 
         ctx.apply_uniforms(&shader::Uniforms {
-            offset: (*&self.x, *&self.y),
+            offset: (*&self.drone.x, *&self.drone.y),
         });
+
+
+
         ctx.end_render_pass();
 
         ctx.commit_frame();
@@ -101,14 +136,15 @@ impl EventHandler for Stage {
         _repeat: bool
     ) { 
         match _keycode{
-            miniquad::KeyCode::Left=>self.x -= 0.1,
-            miniquad::KeyCode::Right=>self.x += 0.1,
-            miniquad::KeyCode::Up=>self.y += 0.1,
-            miniquad::KeyCode::Down=>self.y -= 0.1,
+            miniquad::KeyCode::Left=>self.drone.x -= 0.1,
+            miniquad::KeyCode::Right=>self.drone.x += 0.1,
+            miniquad::KeyCode::Up=>self.drone.y += 0.1,
+            miniquad::KeyCode::Down=>self.drone.y -= 0.1,
+            /*
             miniquad::KeyCode::A=>self.x -= 0.1,
             miniquad::KeyCode::D=>self.x += 0.1,
             miniquad::KeyCode::W=>self.y += 0.1,
-            miniquad::KeyCode::S=>self.y -= 0.1,
+            miniquad::KeyCode::S=>self.y -= 0.1,*/
             _=>println!("unhandled key"),
             }
           
