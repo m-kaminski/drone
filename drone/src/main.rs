@@ -20,7 +20,7 @@ struct Stage {
 /// TRAIT RENDER
 
 trait  Render {
-     fn render(&self);
+     fn render(&self, ctx: &mut Context, pipeline: & Pipeline);
 }
 
 struct Drone {
@@ -30,8 +30,18 @@ struct Drone {
 }
 
 impl Render for Drone {
-     fn render(&self) {
+     fn render(&self, ctx: &mut Context, pipeline: & Pipeline) {
         
+        ctx.apply_pipeline(pipeline);
+
+
+        ctx.apply_bindings(&self.bindings);
+        // begining and length of index buffer (essentially number of vertices) and number of instances
+        ctx.draw(0, 6, 1);
+
+        ctx.apply_uniforms(&shader::Uniforms {
+            offset: (*&self.x, *&self.y),
+        });
         
     }
 }
@@ -122,18 +132,8 @@ impl EventHandler for Stage {
 
         ctx.begin_default_pass(Default::default());
 
-        ctx.apply_pipeline(&self.pipeline);
 
-
-        ctx.apply_bindings(&self.drone.bindings);
-        // begining and length of index buffer (essentially number of vertices) and number of instances
-        ctx.draw(0, 6, 1);
-
-        ctx.apply_uniforms(&shader::Uniforms {
-            offset: (*&self.drone.x, *&self.drone.y),
-        });
-
-
+        &self.drone.render(ctx, &self.pipeline);
 
         ctx.end_render_pass();
 
@@ -152,11 +152,6 @@ impl EventHandler for Stage {
             miniquad::KeyCode::Right=>self.drone.x += 0.1,
             miniquad::KeyCode::Up=>self.drone.y += 0.1,
             miniquad::KeyCode::Down=>self.drone.y -= 0.1,
-            /*
-            miniquad::KeyCode::A=>self.x -= 0.1,
-            miniquad::KeyCode::D=>self.x += 0.1,
-            miniquad::KeyCode::W=>self.y += 0.1,
-            miniquad::KeyCode::S=>self.y -= 0.1,*/
             _=>println!("unhandled key"),
             }
           
