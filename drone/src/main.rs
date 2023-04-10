@@ -67,9 +67,7 @@ impl Stage {
             ],
             shader,
         );
-        let x = -0.32;
-        let y = 0.5;
-        Stage { pipeline, bindings, x, y }
+        Stage { pipeline, bindings, x:-0.3, y:0.4 }
     }
 }
 
