@@ -50,7 +50,7 @@ impl Drone {
 
         let indices: [u16; 6] = [0, 1, 2, 0, 2, 3];
         let index_buffer = Buffer::immutable(ctx, BufferType::IndexBuffer, &indices);
-
+        //TextureParams Nearest
         let pixels: [u8; 4 * 4 * 4] = [ 
             // 4 rows, 4 pixels each
             0x00, 0xFF, 0xFF, 0xFF, // bottom left corner
@@ -67,7 +67,19 @@ impl Drone {
             0xFF, 0xFF, 0xFF, 0xFF,
             0xFF, 0x00, 0x00, 0xFF,   0x00, 0x00, 0x00, 0xFF, // top right corner
         ];
-        let texture = Texture::from_rgba8(ctx, 4, 4, &pixels);
+        //let texture = Texture::from_rgba8(ctx, 4, 4, &pixels);
+
+        let texture = Texture::from_data_and_format(
+            ctx,
+            &pixels,
+            TextureParams {
+                width: 4,
+                height: 4,
+                format: TextureFormat::RGBA8,
+                wrap: TextureWrap::Clamp,
+                filter: FilterMode::Nearest, // use Linear for smooth
+            },
+        );
 
         let bindings = Bindings {
             vertex_buffers: vec![vertex_buffer],
