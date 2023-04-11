@@ -6,16 +6,7 @@ use miniquad::*;
 use crate::render::*;
 
 
-#[repr(C)]
-struct Vec2 {
-    x: f32,
-    y: f32,
-}
-#[repr(C)]
-struct Vertex {
-    pos: Vec2,
-    uv: Vec2,
-}
+
 
 pub struct  Drone {
     bindings: Bindings,

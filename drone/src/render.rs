@@ -5,7 +5,16 @@ pub trait  Render {
     fn render(&self, ctx: &mut Context, pipeline: & Pipeline);
 }
 
-
+#[repr(C)]
+pub struct Vec2 {
+    pub x: f32,
+    pub y: f32,
+}
+#[repr(C)]
+pub struct Vertex {
+    pub pos: Vec2,
+    pub uv: Vec2,
+}
 
 pub fn gen_texture(ctx: &mut Context, w: usize, h: usize, tex: &str) -> Texture {
 
