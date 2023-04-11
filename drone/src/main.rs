@@ -46,6 +46,36 @@ impl Render for Drone {
     }
 }
 
+fn gen_texture(ctx: &mut Context, w: usize, h: usize, tex: &str) -> Texture {
+
+    println!("{}",tex);
+        //TextureParams Nearest
+        //let  AS : usize = ;
+        let mut pixels  = vec![ 0xFF; w*h*4]; 
+
+        let mut i = 0;
+        for c in tex.chars() { 
+            match c {
+                'R' =>{ pixels[i] = 0xff;pixels[i+1] = 0x00;pixels[i+2] = 0x00; i+=4},
+                'B' =>{ pixels[i] = 0xFF;pixels[i+1] = 0x00;pixels[i+2] = 0xFF; i+=4},
+                '_' =>{ pixels[i+3] = 0x00; i+=4},
+                _=>println!("unhandled key"),
+                }
+        }
+        
+        return Texture::from_data_and_format(
+            ctx,
+            &pixels,
+            TextureParams {
+                width: 4,
+                height: 4,
+                format: TextureFormat::RGBA8,
+                wrap: TextureWrap::Clamp,
+                filter: FilterMode::Nearest, // use Linear for smooth
+            },
+        );
+}
+
 impl Drone {
     pub fn new(ctx: &mut Context) -> Drone {
        
@@ -60,37 +90,11 @@ impl Drone {
 
         let indices: [u16; 6] = [0, 1, 2, 0, 2, 3];
         let index_buffer = Buffer::immutable(ctx, BufferType::IndexBuffer, &indices);
-        //TextureParams Nearest
-        let pixels: [u8; 4 * 4 * 4] = [ 
-            // 4 rows, 4 pixels each
-            0x00, 0xFF, 0xFF, 0xFF, // bottom left corner
-            0xFF, 0x00, 0x00, 0xFF,  
-            0xFF, 0xFF, 0xFF, 0xFF,   0xFF, 0xFF, 0x00, 0xFF, // bottom right corner
-
-            0xFF, 0x00, 0x00, 0xFF,   0xFF, 0xFF, 0xFF, 0xFF, 
-            0xFF, 0x00, 0x00, 0xFF,   0xFF, 0xFF, 0xFF, 0xFF, 
-            
-            0xFF, 0xFF, 0xFF, 0xFF,   0xFF, 0x00, 0x00, 0x00, 
-            0xFF, 0xFF, 0xFF, 0xFF,   0xFF, 0x00, 0x00, 0xFF, 
-            
-            0x00, 0xFF, 0x00, 0xFF, // top left corner
-            0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0x00, 0x00, 0xFF,   0x00, 0x00, 0x00, 0xFF, // top right corner
-        ];
-        //let texture = Texture::from_rgba8(ctx, 4, 4, &pixels);
-
-        let texture = Texture::from_data_and_format(
-            ctx,
-            &pixels,
-            TextureParams {
-                width: 4,
-                height: 4,
-                format: TextureFormat::RGBA8,
-                wrap: TextureWrap::Clamp,
-                filter: FilterMode::Nearest, // use Linear for smooth
-            },
-        );
-
+        let texture = gen_texture(ctx, 4,4,
+r#"_BB_
+BRRB
+BRRB
+_BB_"#);
         let bindings = Bindings {
             vertex_buffers: vec![vertex_buffer],
             index_buffer: index_buffer,
