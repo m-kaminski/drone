@@ -1,5 +1,5 @@
 use miniquad::*;
-use rand::Rng;
+//#use rand::Rng;
 
 
 use crate::render::*;
@@ -16,7 +16,11 @@ impl Render for Background {
 
        ctx.apply_bindings(&self.bindings);
        // begining and length of index buffer (essentially number of vertices) and number of instances
+       ctx.apply_uniforms(&crate::shader::Uniforms {
+        offset: (0.0, 0.0),
+    });
        ctx.draw(0, 6, 1);
+
    }
 }
 
@@ -37,12 +41,12 @@ impl Background {
 
         let wh = 512;
         let mut pixels  = vec![ 0xFF; wh * wh * 4]; 
-        let mut rng = rand::thread_rng();
+        //#let mut rng = rand::thread_rng();
 
         for y in 0..wh {
             for x in 0..wh {
                 let i = y * 4 * wh + x * 4;
-                if (rng.gen_range(0..wh) < y) {
+                if i % wh < y {
                     pixels[i] = 0x00;pixels[i+1] = 0x00; pixels[i+2] = 0xFF;
                 } else {
                     pixels[i] = 0x60;pixels[i+1] = 0x80; pixels[i+2] = 0xFF;
@@ -54,8 +58,8 @@ impl Background {
             ctx,
             &pixels,
             TextureParams {
-                width: w as u32,
-                height: h as u32,
+                width: wh as u32,
+                height: wh as u32,
                 format: TextureFormat::RGBA8,
                 wrap: TextureWrap::Clamp,
                 filter: FilterMode::Nearest, // use Linear for smooth

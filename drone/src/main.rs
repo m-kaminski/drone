@@ -1,5 +1,6 @@
 use miniquad::*;
 use crate::drone::*;
+use crate::background::*;
 
 mod drone; 
 mod background;
@@ -36,7 +37,7 @@ impl Stage {
             ],
             shader,
         );
-        Stage { pipeline,drone }
+        Stage { pipeline,drone , background}
     }
 }
 

@@ -22,11 +22,11 @@ impl Render for Drone {
 
        ctx.apply_bindings(&self.bindings);
        // begining and length of index buffer (essentially number of vertices) and number of instances
-       ctx.draw(0, 6, 1);
 
        ctx.apply_uniforms(&crate::shader::Uniforms {
-           offset: (*&self.x, *&self.y),
-       });
+        offset: (*&self.x, *&self.y),
+    });       ctx.draw(0, 6, 1);
+
        
    }
 }
