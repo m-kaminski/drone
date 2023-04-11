@@ -14,7 +14,8 @@
     varying lowp vec2 texcoord;
     uniform sampler2D tex;
     void main() {
-        gl_FragColor = texture2D(tex, texcoord);
+        lowp vec4 col = texture2D(tex, texcoord);
+        gl_FragColor = col;
     }"#;
 
     pub fn meta() -> ShaderMeta {

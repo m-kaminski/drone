@@ -1,5 +1,6 @@
 use miniquad::*;
 //#use rand::Rng;
+use rand::Rng;
 
 
 use crate::render::*;
@@ -41,15 +42,17 @@ impl Background {
 
         let wh = 512;
         let mut pixels  = vec![ 0xFF; wh * wh * 4]; 
-        //#let mut rng = rand::thread_rng();
+        let mut rng = rand::thread_rng();
 
         for y in 0..wh {
             for x in 0..wh {
                 let i = y * 4 * wh + x * 4;
-                if i % wh < y {
-                    pixels[i] = 0x00;pixels[i+1] = 0x00; pixels[i+2] = 0xFF;
-                } else {
+                if rng.gen_range(0..wh) < y/2 {
+                    pixels[i] = 0x90;pixels[i+1] = 0xB0; pixels[i+2] = 0xFF;
+                } else if rng.gen_range(0..wh) < y {
                     pixels[i] = 0x60;pixels[i+1] = 0x80; pixels[i+2] = 0xFF;
+                } else {
+                    pixels[i] = 0x20;pixels[i+1] = 0x30; pixels[i+2] = 0xFF;
                 }
             }
         }

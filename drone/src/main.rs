@@ -8,17 +8,11 @@ mod shader;
 use crate::render::*;
 mod render;
 
-
-
 struct Stage {
     pipeline: Pipeline,
     drone: Drone,
     background: Background
 }
-
-
-
-
 
 impl Stage {
     pub fn new(ctx: &mut Context) -> Stage {
@@ -40,7 +34,6 @@ impl Stage {
         Stage { pipeline,drone , background}
     }
 }
-
 
 impl EventHandler for Stage {
 
