@@ -22,7 +22,13 @@ impl Stage {
         let background = Background::new(ctx);
         let shader = Shader::new(ctx, shader::VERTEX, shader::FRAGMENT, shader::meta()).unwrap();
 
-        let pipeline = Pipeline::new(
+
+        BlendState::new(
+            Equation::Add,
+            BlendFactor::Value(BlendValue::SourceAlpha),
+            BlendFactor::OneMinusValue(BlendValue::SourceAlpha)
+        );
+        let pipeline = Pipeline::with_params(
             ctx,
             &[BufferLayout::default()],
             &[
@@ -30,6 +36,14 @@ impl Stage {
                 VertexAttribute::new("uv", VertexFormat::Float2),
             ],
             shader,
+            PipelineParams {
+                color_blend: Some(BlendState::new(
+                    Equation::Add,
+                    BlendFactor::Value(BlendValue::SourceAlpha),
+                    BlendFactor::OneMinusValue(BlendValue::SourceAlpha),
+                )),
+                ..Default::default()
+            },
         );
         Stage { pipeline,drone , background}
     }
@@ -37,13 +51,15 @@ impl Stage {
 
 impl EventHandler for Stage {
 
-    fn update(&mut self, _ctx: &mut Context) {}
+    fn update(&mut self, _ctx: &mut Context) {
+
+        self.drone.frame += 1;
+    }
 
     fn draw(&mut self, ctx: &mut Context) {
 
         ctx.begin_default_pass(Default::default());
-
-
+        
         let _ = &self.background.render(ctx, &self.pipeline);
         let _ = &self.drone.render(ctx, &self.pipeline);
 
