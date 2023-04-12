@@ -57,6 +57,41 @@ impl Background {
             }
         }
 
+
+        for x in 0..wh {
+            let y1 = rng.gen_range(wh*87/100..wh*90/100);
+            for y in y1..wh {
+                let i = y * 4 * wh + x * 4;
+                if rng.gen_range(0..2) == 1 {
+                pixels[i] = 0xdd; pixels[i+1] = 0xdd; pixels[i+2] = 0x55;
+                } else {
+
+                pixels[i] = 0xff; pixels[i+1] = 0xff; pixels[i+2] = 0x77;
+                }
+            }
+            let mut darken = rng.gen_range(0..30);
+            for y in y1..wh {
+                let i = y * 4 * wh + x * 4;
+                pixels[i] -=darken; pixels[i+1] -=darken; pixels[i+2]  -= darken;
+            }
+
+            let y2 = rng.gen_range(y1..wh);
+            let y3 = rng.gen_range(y2..wh);
+
+
+            darken = rng.gen_range(0..30);
+            for y in y1..y2 {
+                let i = y * 4 * wh + x * 4;
+                pixels[i] -=darken; pixels[i+1] -=darken; pixels[i+2]  -= darken;
+            }
+            darken = rng.gen_range(0..30);
+            for y in y2..wh {
+                let i = y * 4 * wh + x * 4;
+                pixels[i] -=darken; pixels[i+1] -=darken; pixels[i+2]  -= darken;
+            }
+        }
+
+
         let texture =  Texture::from_data_and_format(
             ctx,
             &pixels,
