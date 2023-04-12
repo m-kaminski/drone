@@ -1,8 +1,10 @@
 use miniquad::*;
 use crate::drone::*;
+use crate::missile::*;
 use crate::background::*;
 
 mod drone; 
+mod missile;
 mod background;
 mod shader;
 use crate::render::*;
@@ -11,7 +13,8 @@ mod render;
 struct Stage {
     pipeline: Pipeline,
     drone: Drone,
-    background: Background
+    background: Background,
+    missile: Missile,
 }
 
 impl Stage {
@@ -19,6 +22,7 @@ impl Stage {
         #[rustfmt::skip]
 
         let drone = Drone::new(ctx);
+        let missile = Missile::new(ctx);
         let background = Background::new(ctx);
         let shader = Shader::new(ctx, shader::VERTEX, shader::FRAGMENT, shader::meta()).unwrap();
 
@@ -45,7 +49,7 @@ impl Stage {
                 ..Default::default()
             },
         );
-        Stage { pipeline,drone , background}
+        Stage { pipeline,drone , background,missile}
     }
 }
 
@@ -62,6 +66,7 @@ impl EventHandler for Stage {
         
         let _ = &self.background.render(ctx, &self.pipeline);
         let _ = &self.drone.render(ctx, &self.pipeline);
+        let _ = &self.missile.render(ctx, &self.pipeline);
 
         ctx.end_render_pass();
 
