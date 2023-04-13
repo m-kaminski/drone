@@ -23,6 +23,11 @@ impl Render for Background {
        ctx.draw(0, 6, 1);
 
    }
+
+
+   fn animate(&mut self, tdelta: f32) {
+   }
+
 }
 
 impl Background {

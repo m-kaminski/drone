@@ -3,6 +3,7 @@ use miniquad::*;
 
 pub trait  Render {
     fn render(&self, ctx: &mut Context, pipeline: & Pipeline);
+    fn animate(&mut self, tdelta: f32);
 }
 
 #[repr(C)]
@@ -31,6 +32,7 @@ pub fn gen_texture(ctx: &mut Context, w: usize, h: usize, tex: &str) -> Texture 
                 'Y' =>{ pixels[i] = 0xFF;pixels[i+1] = 0xFF;pixels[i+2] = 0x00; i+=4},
                 'D' =>{ pixels[i] = 0x50;pixels[i+1] = 0x50;pixels[i+2] = 0x50; i+=4},
                 'G' =>{ pixels[i] = 0x88;pixels[i+1] = 0x88;pixels[i+2] = 0x88; i+=4},
+                'W' =>{ pixels[i] = 0xFF;pixels[i+1] = 0xFF;pixels[i+2] = 0xFF; i+=4},
                 'K' =>{ pixels[i] = 0x00;pixels[i+1] = 0x00;pixels[i+2] = 0x00; i+=4},
                 '_' =>{ pixels[i] = 0x00;pixels[i+1] = 0x00;pixels[i+2] = 0x00;pixels[i+3] = 0x00; i+=4},
                 _=>println!("unhandled key"),

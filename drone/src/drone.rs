@@ -32,6 +32,11 @@ impl Render for Drone {
 
        
    }
+
+
+   fn animate(&mut self, tdelta: f32) {
+    self.frame += 1;
+   }
 }
 
 impl Drone {

@@ -57,7 +57,8 @@ impl EventHandler for Stage {
 
     fn update(&mut self, _ctx: &mut Context) {
 
-        self.drone.frame += 1;
+        self.drone.animate(0.1);
+        self.missile.animate(0.1);
     }
 
     fn draw(&mut self, ctx: &mut Context) {
