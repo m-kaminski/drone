@@ -14,7 +14,8 @@ struct Stage {
     pipeline: Pipeline,
     drone: Drone,
     background: Background,
-    missile: Missile,
+    //missile: Missile,
+    dynamic_objects: Vec<Box<dyn Render>>,
 }
 
 impl Stage {
@@ -22,11 +23,11 @@ impl Stage {
         #[rustfmt::skip]
 
         let drone = Drone::new(ctx);
-        let missile = Missile::new(ctx);
+        //let missile = Missile::new(ctx);
         let background = Background::new(ctx);
         let shader = Shader::new(ctx, shader::VERTEX, shader::FRAGMENT, shader::meta()).unwrap();
-
-
+        let mut dynamic_objects : Vec<Box<dyn Render>> = Vec::new();
+        dynamic_objects.push(Box::new(Missile::new(ctx)));
         BlendState::new(
             Equation::Add,
             BlendFactor::Value(BlendValue::SourceAlpha),
@@ -49,7 +50,7 @@ impl Stage {
                 ..Default::default()
             },
         );
-        Stage { pipeline,drone , background,missile}
+        Stage { pipeline,drone , background,dynamic_objects}
     }
 }
 
@@ -58,7 +59,12 @@ impl EventHandler for Stage {
     fn update(&mut self, _ctx: &mut Context) {
 
         self.drone.animate(0.1);
-        self.missile.animate(0.1);
+        //self.missile.animate(0.1);
+
+        for ob in self.dynamic_objects.iter_mut() {
+            //println!("RM");
+             &ob.animate(0.1);
+         }
     }
 
     fn draw(&mut self, ctx: &mut Context) {
@@ -67,8 +73,12 @@ impl EventHandler for Stage {
         
         let _ = &self.background.render(ctx, &self.pipeline);
         let _ = &self.drone.render(ctx, &self.pipeline);
-        let _ = &self.missile.render(ctx, &self.pipeline);
+        //let _ = &self.missile.render(ctx, &self.pipeline);
 
+        for ob in self.dynamic_objects.iter_mut() {
+          // println!("RM {}", self.dynamic_objects.len());
+          let _ = &ob.render(ctx, &self.pipeline);
+        }
         ctx.end_render_pass();
 
         ctx.commit_frame();
@@ -86,6 +96,7 @@ impl EventHandler for Stage {
             miniquad::KeyCode::Right=>self.drone.x += 0.1,
             miniquad::KeyCode::Up=>self.drone.y += 0.1,
             miniquad::KeyCode::Down=>self.drone.y -= 0.1,
+            miniquad::KeyCode::Space=>self.dynamic_objects.push(Box::new(Missile::new(_ctx))),
             _=>println!("unhandled key"),
             }
           

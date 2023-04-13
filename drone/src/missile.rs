@@ -22,8 +22,9 @@ impl Render for Missile {
        ctx.apply_uniforms(&crate::shader::Uniforms {
         offset: (*&self.x, *&self.y),
     });       
-    
+    //
     ctx.draw( ((self.frame /10)%4)*6, 6, 1);
+    println!("RM");
    }
 
    fn animate(&mut self, tdelta: f32) {
